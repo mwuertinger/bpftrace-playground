@@ -1,0 +1,13 @@
+#!/usr/bin/env bpftrace
+
+uprobe:./golang-bpftrace-playground:"main.myfunc"
+{
+        @start[tid] = nsecs;
+}
+
+uretprobe:./golang-bpftrace-playground:"main.myfunc"
+/@start[tid]/
+{
+        @msecs = hist((nsecs - @start[tid]) / 1000000);
+        delete(@start[tid]);
+}
