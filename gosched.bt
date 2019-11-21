@@ -1,0 +1,9 @@
+#!/usr/bin/env bpftrace
+
+// this tool prints when the Go scheduler decides to run another goroutine.
+
+u:./golang-bpftrace-playground:"runtime.execute" {
+	$goid = *(int64*)(sarg0+19*8);
+	// $goid = *(int64*)(uaddr("g")+19*8);
+	printf("[%d] (%d) execute goroutine %d\n", pid, tid, $goid)
+}
