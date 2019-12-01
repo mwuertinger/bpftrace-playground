@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// start a lot of goroutines calling myfunc indefinitely
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1; i++ {
 		go func() {
 			buf := make([]byte, 2<<24, 2<<24)
 			for {
