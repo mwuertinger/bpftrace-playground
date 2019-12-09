@@ -1,0 +1,9 @@
+#!/bin/env bpftrace
+
+kprobe:icmp_* {
+	printf("-> %s\n", probe);
+}
+
+kretprobe:icmp_* {
+	printf("<- %s\n", probe)
+}
