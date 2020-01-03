@@ -1,0 +1,19 @@
+#!/usr/bin/env -S bpftrace
+
+#include <linux/sched.h>
+
+tracepoint:syscalls:sys_enter_open,
+tracepoint:syscalls:sys_enter_openat
+/ args->flags!=0 && str(args->filename)=="/proc/sys/net/ipv6/conf/wlp2s0/disable_ipv6" / {
+	time("%H:%M:%S ");
+	printf("%d %s %s %x\n", pid, comm, str(args->filename), args->flags);
+	
+	$task = (struct task_struct *)curtask;
+
+	unroll(6) {
+		printf("\t[%d] %s\n", $task->pid, $task->comm);
+		if ($task->pid != 1) {
+			$task = $task->parent;
+		}
+	}
+}
