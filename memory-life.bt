@@ -1,0 +1,22 @@
+#!/bin/env bpftrace
+
+// Measure the lifetime of memory allocated with malloc per command.
+
+uretprobe:/lib/x86_64-linux-gnu/libc.so.6:malloc,
+uretprobe:/lib/x86_64-linux-gnu/libc.so.6:calloc
+{
+	@start[retval] = nsecs;
+}
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:free
+/@start[arg0]/
+{
+	$us = (nsecs - @start[arg0]) / 1000;
+	@life_us[comm] = hist($us);
+	delete(@start[arg0]);
+}
+
+END
+{
+	clear(@start);
+}

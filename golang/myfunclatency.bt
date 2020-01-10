@@ -1,0 +1,6 @@
+#!/usr/bin/env bpftrace
+
+uprobe:./golang-bpftrace-playground:"main.myfunc"
+{
+	printf("rsp=%d", reg("rsp"));
+}
